@@ -1,0 +1,20 @@
+@page
+@model AddEntryModel
+
+<h1>Add Entry</h1>
+
+<form method="post">
+    <label>Blood Glucose:</label>
+    <input asp-for="BG" /><br />
+
+    <label>Carbs:</label>
+    <input asp-for="Carbs" /><br />
+
+    <label>Insulin:</label>
+    <input asp-for="Insulin" /><br />
+
+    <button type="submit">Save</button>
+</form>
+
+<br />
+<a href="/">Back</a>

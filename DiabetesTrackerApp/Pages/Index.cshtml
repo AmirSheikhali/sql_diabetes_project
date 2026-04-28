@@ -1,0 +1,103 @@
+﻿@page
+@model IndexModel
+
+<div class="main-container">
+
+    <!-- LEFT SIDE (Dashboard) -->
+    <div class="panel">
+
+        <div class="header">
+            <h3>Diabetes Tracker</h3>
+            <div>
+                <a href="/AddEntry" class="btn">Add New Entry</a>
+                <button class="btn">Logout</button>
+            </div>
+        </div>
+
+        <h2 class="center">Dashboard Overview</h2>
+
+        <!-- Summary -->
+        <div class="card">
+            <h4>Today's Summary</h4>
+            <ul>
+                <li>Avg BG: @Model.AvgBG mg/dL</li>
+                <li>Total Carbs: @Model.TotalCarbs g</li>
+                <li>Total Insulin: @Model.TotalInsulin units</li>
+            </ul>
+        </div>
+
+        <!-- Weekly Trends (placeholder for now) -->
+        <div class="card">
+            <h4>Weekly Trends</h4>
+            <div class="chart-placeholder">[ Chart Coming Soon ]</div>
+        </div>
+
+        <!-- Entries -->
+        <div class="card">
+            <h4>Recent Entries</h4>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Blood Glucose</th>
+                        <th>Carbs</th>
+                        <th>Insulin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in Model.Entries)
+                    {
+                        <tr>
+                            <td>@entry.Date</td>
+                            <td>@entry.BG</td>
+                            <td>@entry.Carbs</td>
+                            <td>@entry.Insulin</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE (Reports) -->
+    <div class="panel">
+
+        <div class="header">
+            <h3>Diabetes Tracker</h3>
+            <div>
+                <button class="btn">Dashboard</button>
+                <button class="btn">Reports</button>
+                <button class="btn">Logout</button>
+            </div>
+        </div>
+
+        <h2 class="center">Reports & Insights</h2>
+
+        <div class="card">
+            <h4>Weekly Averages</h4>
+            <ul>
+                <li>Avg BG: @Model.AvgBG mg/dL</li>
+                <li>Avg Carbs: @Model.TotalCarbs g</li>
+                <li>Avg Insulin: @Model.TotalInsulin units</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h4>BG Trends</h4>
+            <div class="chart-placeholder">[ Chart Coming Soon ]</div>
+        </div>
+
+        <div class="card">
+            <h4>Insights</h4>
+            <ul>
+                <li>BG tends to drop after meals</li>
+                <li>Higher carbs on weekends</li>
+                <li>Insulin usage increased this week</li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
