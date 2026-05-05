@@ -1,20 +1,26 @@
 @page
 @model AddEntryModel
 
-<h1>Add Entry</h1>
-
 <form method="post">
+
+    <label>User:</label>
+    <select asp-for="UserId">
+        <option value="1">Amir</option>
+        <option value="2">David</option>
+        <option value="3">Jimmy</option>
+    </select>
+
     <label>Blood Glucose:</label>
-    <input asp-for="BG" /><br />
+    <input asp-for="BG" />
 
     <label>Carbs:</label>
-    <input asp-for="Carbs" /><br />
+    <input asp-for="Carbs" />
 
     <label>Insulin:</label>
-    <input asp-for="Insulin" /><br />
+    <input asp-for="Insulin" />
+
+    <label>Note:</label>
+    <input asp-for="Note" />
 
     <button type="submit">Save</button>
 </form>
-
-<br />
-<a href="/">Back</a>

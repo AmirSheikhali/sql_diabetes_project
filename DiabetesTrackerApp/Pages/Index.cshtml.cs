@@ -11,17 +11,33 @@ public class IndexModel : PageModel
 
     public List<Entry> Entries { get; set; } = new List<Entry>();
 
+    public List<int> BGValues { get; set; } = new List<int>();
+    public List<double> InsulinValues { get; set; } = new List<double>();
+    public List<string> Labels { get; set; } = new List<string>();
+
     public double AvgBG { get; set; }
-    public int TotalCarbs { get; set; }
-    public double TotalInsulin { get; set; }
+    public double AvgInsulin { get; set; }
+
+    public int SelectedUser { get; set; }
+    public string UserName { get; set; } = "";
 
     public IndexModel(IConfiguration config)
     {
         _config = config;
     }
 
-    public void OnGet()
+    public void OnGet(int? userId)
     {
+        SelectedUser = userId ?? 1;
+
+        UserName = SelectedUser switch
+        {
+            1 => "Amir",
+            2 => "David",
+            3 => "Jimmy",
+            _ => "User"
+        };
+
         string connStr = _config.GetConnectionString("DefaultConnection");
 
         using (var conn = new MySqlConnection(connStr))
@@ -29,41 +45,51 @@ public class IndexModel : PageModel
             conn.Open();
 
             string query = @"
-            SELECT d.day_name, bg.bg_level, ci.carbs, ins.dose
+            SELECT bg.bg_time, bg.bg_level, bg.note, ins.dose
             FROM BloodGlucose bg
-            JOIN Days d ON bg.day_id = d.day_id
-            LEFT JOIN CarbIntake ci 
-                ON bg.user_id = ci.user_id AND bg.day_id = ci.day_id
-            LEFT JOIN Insulin ins 
-                ON bg.bg_id = ins.bg_id
-            WHERE bg.user_id = 1
-            ORDER BY bg.bg_id DESC
-            LIMIT 10;
+            LEFT JOIN Insulin ins ON bg.bg_id = ins.bg_id
+            WHERE bg.user_id = @userId
+            ORDER BY bg.bg_time ASC
+            LIMIT 7;
             ";
 
             using (var cmd = new MySqlCommand(query, conn))
-            using (var reader = cmd.ExecuteReader())
             {
-                while (reader.Read())
+                cmd.Parameters.AddWithValue("@userId", SelectedUser);
+
+                using (var reader = cmd.ExecuteReader())
                 {
-                    Entries.Add(new Entry
+                    while (reader.Read())
                     {
-                        Date = reader["day_name"]?.ToString() ?? "",
-                        BG = Convert.ToInt32(reader["bg_level"]),
-                        Carbs = reader["carbs"] == DBNull.Value ? 0 : Convert.ToInt32(reader["carbs"]),
-                        Insulin = reader["dose"] == DBNull.Value ? 0 : Convert.ToDouble(reader["dose"])
-                    });
+                        TimeSpan time = (TimeSpan)reader["bg_time"];
+                        DateTime displayTime = DateTime.Today.Add(time);
+
+                        int bgLevel = Convert.ToInt32(reader["bg_level"]);
+                        double insulin = reader["dose"] == DBNull.Value ? 0 : Convert.ToDouble(reader["dose"]);
+
+                        string note = reader["note"]?.ToString() ?? "";
+
+                        Entries.Add(new Entry
+                        {
+                            Date = displayTime.ToString("hh:mm tt"),
+                            BG = bgLevel,
+                            Insulin = Math.Round(insulin, 1),
+                            Note = note
+                        });
+
+                        BGValues.Add(bgLevel);
+                        InsulinValues.Add(Math.Round(insulin, 1));
+                        Labels.Add(displayTime.ToString("hh:mm tt"));
+                    }
                 }
             }
         }
 
-        // ✅ Calculate summary values
-        if (Entries.Count > 0)
-        {
-            AvgBG = Entries.Average(e => e.BG);
-            TotalCarbs = Entries.Sum(e => e.Carbs);
-            TotalInsulin = Entries.Sum(e => e.Insulin);
-        }
+        if (BGValues.Count > 0)
+            AvgBG = Math.Round(BGValues.Average());
+
+        if (InsulinValues.Count > 0)
+            AvgInsulin = Math.Round(InsulinValues.Average(), 1);
     }
 }
 
@@ -71,6 +97,6 @@ public class Entry
 {
     public string Date { get; set; } = "";
     public int BG { get; set; }
-    public int Carbs { get; set; }
     public double Insulin { get; set; }
+    public string Note { get; set; } = "";
 }

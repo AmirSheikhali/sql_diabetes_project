@@ -1,103 +1,103 @@
 ﻿@page
 @model IndexModel
 
+<link rel="stylesheet" href="~/css/site.css" />
+
 <div class="main-container">
 
-    <!-- LEFT SIDE (Dashboard) -->
-    <div class="panel">
+    <div class="left-panel">
 
-        <div class="header">
-            <h3>Diabetes Tracker</h3>
-            <div>
-                <a href="/AddEntry" class="btn">Add New Entry</a>
-                <button class="btn">Logout</button>
-            </div>
+        <div class="header card">
+            <h2>Diabetes Tracker</h2>
+            <a href="/AddEntry" class="btn">Add Entry</a>
         </div>
 
-        <h2 class="center">Dashboard Overview</h2>
-
-        <!-- Summary -->
-        <div class="card">
-            <h4>Today's Summary</h4>
-            <ul>
-                <li>Avg BG: @Model.AvgBG mg/dL</li>
-                <li>Total Carbs: @Model.TotalCarbs g</li>
-                <li>Total Insulin: @Model.TotalInsulin units</li>
-            </ul>
+        <div class="card demo-user">
+            <strong>Demo User:</strong> @Model.UserName
         </div>
 
-        <!-- Weekly Trends (placeholder for now) -->
-        <div class="card">
-            <h4>Weekly Trends</h4>
-            <div class="chart-placeholder">[ Chart Coming Soon ]</div>
+        <div class="card user-selector">
+            <a class="btn @(Model.SelectedUser == 1 ? "active" : "")" href="/?userId=1">Amir</a>
+            <a class="btn @(Model.SelectedUser == 2 ? "active" : "")" href="/?userId=2">David</a>
+            <a class="btn @(Model.SelectedUser == 3 ? "active" : "")" href="/?userId=3">Jimmy</a>
         </div>
 
-        <!-- Entries -->
+        <h1 class="title">Dashboard Overview</h1>
+
+        <!-- SUMMARY -->
         <div class="card">
-            <h4>Recent Entries</h4>
+            <p>Avg BG: @Model.AvgBG mg/dL</p>
+            <p>Avg Insulin: @Model.AvgInsulin units</p>
+        </div>
+
+        <!-- BG CHART -->
+        <div class="card">
+            <h3>Blood Glucose Trend</h3>
+            <canvas id="bgChart"></canvas>
+        </div>
+
+        <!-- INSULIN CHART -->
+        <div class="card">
+            <h3>Insulin Trend</h3>
+            <canvas id="insulinChart"></canvas>
+        </div>
+
+        <!-- TABLE -->
+        <div class="card">
+            <h3>Recent Entries</h3>
 
             <table>
-                <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>BG</th>
+                    <th>Insulin</th>
+                    <th>Note</th>
+                </tr>
+
+                @foreach (var entry in Model.Entries)
+                {
                     <tr>
-                        <th>Date</th>
-                        <th>Blood Glucose</th>
-                        <th>Carbs</th>
-                        <th>Insulin</th>
+                        <td>@entry.Date</td>
+                        <td>@entry.BG</td>
+                        <td>@entry.Insulin</td>
+                        <td>@entry.Note</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var entry in Model.Entries)
-                    {
-                        <tr>
-                            <td>@entry.Date</td>
-                            <td>@entry.BG</td>
-                            <td>@entry.Carbs</td>
-                            <td>@entry.Insulin</td>
-                        </tr>
-                    }
-                </tbody>
+                }
             </table>
         </div>
 
     </div>
 
-    <!-- RIGHT SIDE (Reports) -->
-    <div class="panel">
-
-        <div class="header">
-            <h3>Diabetes Tracker</h3>
-            <div>
-                <button class="btn">Dashboard</button>
-                <button class="btn">Reports</button>
-                <button class="btn">Logout</button>
-            </div>
-        </div>
-
-        <h2 class="center">Reports & Insights</h2>
-
-        <div class="card">
-            <h4>Weekly Averages</h4>
-            <ul>
-                <li>Avg BG: @Model.AvgBG mg/dL</li>
-                <li>Avg Carbs: @Model.TotalCarbs g</li>
-                <li>Avg Insulin: @Model.TotalInsulin units</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <h4>BG Trends</h4>
-            <div class="chart-placeholder">[ Chart Coming Soon ]</div>
-        </div>
-
-        <div class="card">
-            <h4>Insights</h4>
-            <ul>
-                <li>BG tends to drop after meals</li>
-                <li>Higher carbs on weekends</li>
-                <li>Insulin usage increased this week</li>
-            </ul>
-        </div>
-
-    </div>
-
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
+    const bgData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.BGValues));
+    const insulinData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.InsulinValues));
+
+    new Chart(document.getElementById('bgChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Blood Glucose',
+                data: bgData,
+                borderWidth: 2
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('insulinChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Insulin',
+                data: insulinData,
+                borderWidth: 2
+            }]
+        }
+    });
+</script>

@@ -1,0 +1,54 @@
+@page
+@model ReportsModel
+
+<h2>Reports & Insights</h2>
+
+<a href="/?userId=1">Amir</a> |
+<a href="/?userId=2">David</a> |
+<a href="/?userId=3">Jimmy</a>
+
+<br><br>
+
+<a href="/">Dashboard</a>
+
+<hr>
+
+<h3>Weekly Averages</h3>
+
+<p>Average BG: @Model.AvgBG mg/dL</p>
+
+<hr>
+
+<h3>BG Trends</h3>
+
+<canvas id="bgChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
+    const data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.BGValues));
+
+    const ctx = document.getElementById('bgChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Blood Glucose',
+                data: data,
+                borderWidth: 2
+            }]
+        }
+    });
+</script>
+
+<hr>
+
+<h3>Insights</h3>
+<ul>
+    <li>BG trends vary depending on meals</li>
+    <li>Monitor patterns over time</li>
+    <li>Use notes to identify triggers</li>
+</ul>
