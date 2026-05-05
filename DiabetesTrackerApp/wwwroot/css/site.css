@@ -9,15 +9,20 @@ body {
     padding: 20px;
 }
 
-.left-panel { width: 65%; }
-.right-panel { width: 35%; }
+.left-panel {
+    width: 65%;
+}
+
+.right-panel {
+    width: 35%;
+}
 
 .card {
     background: white;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border: 1px solid #ccc;
 }
 
 .header {
@@ -26,21 +31,20 @@ body {
     align-items: center;
 }
 
-.title {
+.center {
     text-align: center;
 }
 
 .btn {
     padding: 6px 12px;
+    background: #ddd;
     border-radius: 5px;
     text-decoration: none;
-    background: #e0e0e0;
     color: black;
-    margin: 3px;
 }
 
 .btn:hover {
-    background: #d0d0d0;
+    background: #ccc;
 }
 
 .active {
@@ -54,17 +58,7 @@ table {
 }
 
 th, td {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
     text-align: center;
-}
-
-.user-selector {
-    text-align: center;
-}
-
-.demo-user {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
 }

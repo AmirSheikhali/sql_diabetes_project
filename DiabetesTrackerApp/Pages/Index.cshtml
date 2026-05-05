@@ -5,65 +5,89 @@
 
 <div class="main-container">
 
+    <!-- LEFT: DASHBOARD -->
     <div class="left-panel">
 
         <div class="header card">
             <h2>Diabetes Tracker</h2>
-            <a href="/AddEntry" class="btn">Add Entry</a>
+            <a href="/AddEntry" class="btn">Add New Entry</a>
         </div>
 
-        <div class="card demo-user">
+        <div class="card center">
             <strong>Demo User:</strong> @Model.UserName
         </div>
 
-        <div class="card user-selector">
-            <a class="btn @(Model.SelectedUser == 1 ? "active" : "")" href="/?userId=1">Amir</a>
-            <a class="btn @(Model.SelectedUser == 2 ? "active" : "")" href="/?userId=2">David</a>
-            <a class="btn @(Model.SelectedUser == 3 ? "active" : "")" href="/?userId=3">Jimmy</a>
+        <div class="card center">
+            <a href="/?userId=1" class="btn @(Model.SelectedUser == 1 ? "active" : "")">Amir</a>
+            <a href="/?userId=2" class="btn @(Model.SelectedUser == 2 ? "active" : "")">David</a>
+            <a href="/?userId=3" class="btn @(Model.SelectedUser == 3 ? "active" : "")">Jimmy</a>
         </div>
 
-        <h1 class="title">Dashboard Overview</h1>
+        <h2 class="center">Dashboard Overview</h2>
 
         <!-- SUMMARY -->
         <div class="card">
+            <h3>Today's Summary</h3>
             <p>Avg BG: @Model.AvgBG mg/dL</p>
-            <p>Avg Insulin: @Model.AvgInsulin units</p>
+            <p>Total Carbs: @Model.TotalCarbs g</p>
+            <p>Total Insulin: @Model.TotalInsulin units</p>
         </div>
 
-        <!-- BG CHART -->
+        <!-- CHART -->
         <div class="card">
-            <h3>Blood Glucose Trend</h3>
-            <canvas id="bgChart"></canvas>
-        </div>
-
-        <!-- INSULIN CHART -->
-        <div class="card">
-            <h3>Insulin Trend</h3>
-            <canvas id="insulinChart"></canvas>
+            <h3>Weekly Trends</h3>
+            <canvas id="chart"></canvas>
         </div>
 
         <!-- TABLE -->
         <div class="card">
             <h3>Recent Entries</h3>
-
             <table>
                 <tr>
                     <th>Time</th>
                     <th>BG</th>
+                    <th>Carbs</th>
                     <th>Insulin</th>
                     <th>Note</th>
                 </tr>
 
-                @foreach (var entry in Model.Entries)
+                @foreach (var e in Model.Entries)
                 {
                     <tr>
-                        <td>@entry.Date</td>
-                        <td>@entry.BG</td>
-                        <td>@entry.Insulin</td>
-                        <td>@entry.Note</td>
+                        <td>@e.Date</td>
+                        <td>@e.BG</td>
+                        <td>@e.Carbs</td>
+                        <td>@e.Insulin</td>
+                        <td>@e.Note</td>
                     </tr>
                 }
             </table>
+        </div>
+
+    </div>
+
+    <!-- RIGHT: REPORTS PANEL -->
+    <div class="right-panel">
+
+        <div class="header card">
+            <h2>Reports</h2>
+            <a href="/Reports?userId=@Model.SelectedUser" class="btn">Open Full Reports</a>
+        </div>
+
+        <div class="card">
+            <h3>Weekly Averages</h3>
+            <p>Avg BG: @Model.AvgBG mg/dL</p>
+            <p>Total Carbs: @Model.TotalCarbs g</p>
+            <p>Total Insulin: @Model.TotalInsulin units</p>
+        </div>
+
+        <div class="card">
+            <h3>Insights</h3>
+            <ul>
+                <li>High BG often follows high carb intake</li>
+                <li>Insulin effectiveness can be tracked over time</li>
+                <li>Use notes to identify triggers</li>
+            </ul>
         </div>
 
     </div>
@@ -74,30 +98,19 @@
 
 <script>
     const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
-    const bgData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.BGValues));
-    const insulinData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.InsulinValues));
+    const bg = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.BGValues));
+    const carbs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CarbValues));
+    const insulin = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.InsulinValues));
 
-    new Chart(document.getElementById('bgChart'), {
+    new Chart(document.getElementById('chart'), {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Blood Glucose',
-                data: bgData,
-                borderWidth: 2
-            }]
-        }
-    });
-
-    new Chart(document.getElementById('insulinChart'), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Insulin',
-                data: insulinData,
-                borderWidth: 2
-            }]
+            datasets: [
+                { label: 'Blood Glucose', data: bg, borderWidth: 2 },
+                { label: 'Carbs', data: carbs, borderWidth: 2 },
+                { label: 'Insulin', data: insulin, borderWidth: 2 }
+            ]
         }
     });
 </script>

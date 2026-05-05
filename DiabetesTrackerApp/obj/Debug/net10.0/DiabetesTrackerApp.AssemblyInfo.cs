@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DiabetesTrackerApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b5b98cab7a2b0a0108509999e0e6a992f8f8699")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+451e4b7627a651a3d8df0b7266b037e7662958a4")]
 [assembly: System.Reflection.AssemblyProductAttribute("DiabetesTrackerApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DiabetesTrackerApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
